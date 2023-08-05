@@ -15,13 +15,37 @@ TODO:
 
 """
 import Bio
+from typing import Dict
 from models.interpolated_mm import IMM
 # read the file and generate a sequence out of it
 
 
 class GeneClassifier(object):
 
-    def __init__(self, num_labels):
+    def __init__(self, labels: Dict[int, str], order: int = 3):
 
-        self.models = [IMM() for i in num_labels]
+        self.order = order
+        self.models = [IMM(order=self.order, label=label, file=path_to_file) for label, path_to_file in labels.items()]
+
+    def predict(self, context) -> int:
+        """
+
+        :param context: sequence to
+        :return:
+        """
+        for model in self.models:
+            model.prepare_model()
+
+
+
+
+if __name__ == "__main__":
+    """
+    Main funciton.
+    Logic:
+    need to created a dict from the training sets: (label, path to file) - done with fasta parser
+    1. function gets' specific file path and returns container of all sequences in file.
+    2. function gets path to folder, create a dict of {label: path to file} for each file in directory
+    """
+
 

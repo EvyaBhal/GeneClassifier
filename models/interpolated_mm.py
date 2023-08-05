@@ -1,20 +1,38 @@
 from models.markov_model import MarkovModel
+from utils.globals import RC_FAILED, RC_SUCCESS
 
 
 class IMM(object):
     """
     Class representation of the Interpolated Markov Model
     """
-    def __init__(self, orders, weights, label):
+    def __init__(self, order, label, file):
         """
         Class constructor
-        :param orders: list of orders for the MM
-        :param weights: weight for each order
+        :param order: max order of MM members
+        :param label: weight for each order
+        :param file: path to FASTA file containing sequences, all with the same label/
         """
-        self.orders = orders  # List of Markov model orders
-        self.weights = weights  # List of corresponding weights
-        self.models = [MarkovModel(order) for order in orders]
+        self.orders = order  # List of Markov model orders
+        self.weights = []  # List of corresponding weights
+        self.models = [MarkovModel(i) for i in range(1, order+1, 1)]
         self.label = label
+        self.file = file
+
+
+    def prepare_model(self,) -> int:
+        """
+        prepare the model by reading the data from the FASTA file and training the model over all the data.
+        :return: RC_SUCCESS or RC_FAILED
+        flow:
+        read FASTA file TODO: need fasta parser lib from Arbel
+        prepare the data according to model format
+        train the model ( use self.train over the extracted data)
+        """
+        #tragining_set = fasta_parser.get_data(file)
+        self.train(training_data=training_set)
+
+        return RC_SUCCESS
 
     def train(self, training_data):
         for model in self.models:
