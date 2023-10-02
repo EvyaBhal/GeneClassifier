@@ -14,10 +14,10 @@ TODO:
 
 
 """
-import Bio
+
 from typing import Dict
+from threading import Thread
 from models.interpolated_mm import IMM
-# read the file and generate a sequence out of it
 
 
 class GeneClassifier(object):
@@ -27,25 +27,30 @@ class GeneClassifier(object):
         self.order = order
         self.models = [IMM(order=self.order, label=label, file=path_to_file) for label, path_to_file in labels.items()]
 
-    def predict(self, context) -> int:
+    def predict(self, input_seq) -> dict:
         """
 
-        :param context: sequence to
+        :param input_seq: sequence to predict if is a part of some label
         :return:
         """
+        genom_to_prob_dict = {}
         for model in self.models:
-            model.prepare_model()
+            genom_to_prob_dict[model.label] = model.predict(input_seq)
+
+        return genom_to_prob_dict
+
+    def train(self):
+        """
+        train the models, each on its own genome
+        """
+        thread_list = []
+        for model in self.models:
+            thread_list.append(Thread(target=model.train)) # Work with threads to improve runtimes
+
+        [thread.start() for thread in thread_list]
+        [thread.join() for thread in thread_list]
 
 
 
-
-if __name__ == "__main__":
-    """
-    Main funciton.
-    Logic:
-    need to created a dict from the training sets: (label, path to file) - done with fasta parser
-    1. function gets' specific file path and returns container of all sequences in file.
-    2. function gets path to folder, create a dict of {label: path to file} for each file in directory
-    """
 
 

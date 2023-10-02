@@ -1,5 +1,6 @@
 from models.markov_model import MarkovModel
 from utils.globals import RC_FAILED, RC_SUCCESS
+from utils.FASTA_parser import FastaParser
 
 
 class IMM(object):
@@ -19,24 +20,10 @@ class IMM(object):
         self.label = label
         self.file = file
 
-
-    def prepare_model(self,) -> int:
-        """
-        prepare the model by reading the data from the FASTA file and training the model over all the data.
-        :return: RC_SUCCESS or RC_FAILED
-        flow:
-        read FASTA file TODO: need fasta parser lib from Arbel
-        prepare the data according to model format
-        train the model ( use self.train over the extracted data)
-        """
-        #tragining_set = fasta_parser.get_data(file)
-        self.train(training_data=training_set)
-
-        return RC_SUCCESS
-
-    def train(self, training_data):
+    def train(self):
+        training_set = FastaParser.get_sequences_from_file(self.file)
         for model in self.models:
-            model.train(training_data)
+            model.train(training_set)
 
     def predict(self, context):
         probabilities = []

@@ -34,7 +34,6 @@ class MarkovModel(object):
 
     def predict(self, context) -> dict:
         """
-
         :param context:
         :return:
         """
